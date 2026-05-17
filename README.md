@@ -1,2 +1,0 @@
-# Solar-pannal-
-energy utilize
