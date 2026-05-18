@@ -52,7 +52,7 @@ raw_data = load_and_preprocess_data()
 
 if not raw_data.empty:
     # ==========================================
-    # 側邊欄控制面板 (完整保留功能)
+    # 側邊欄控制面板
     # ==========================================
     st.sidebar.header("🛠️ 模擬參數控制調整")
     
@@ -93,7 +93,7 @@ if not raw_data.empty:
     top_data = df_result.head(top_n)
 
     # ==========================================
-    # 主畫面佈局設計 (修復圖表模糊與重疊問題)
+    # 主畫面佈局設計
     # ==========================================
     col1, col2 = st.columns([1, 1.2])
     
@@ -111,13 +111,13 @@ if not raw_data.empty:
     with col2:
         st.subheader("📊 數據視覺化長條圖")
         
-        # 繪圖中文化與防亂碼設定
-        plt.rcParams['font.sans-serif'] = ['Microsoft JhengHei'] 
-        plt.rcParams['axes.unicode_minus'] = False 
+        # 優先使用 Linux 雲端字型，次選 Windows 微軟正黑體
+        plt.rcParams['font.sans-serif'] = ['WenQuanYi Micro Hei', 'Microsoft JhengHei', 'DejaVu Sans', 'sans-serif'] 
+        plt.rcParams['axes.unicode_minus'] = False # 解決負號顯示為方塊的問題
         
-        # 圖表高度隨國家數量（top_n）動態增高，避免文字重疊
+        # 圖表高度隨國家數量（top_n）動態增高
         dynamic_height = max(5, top_n * 0.45)
-        fig, ax = plt.subplots(figsize=(10, dynamic_height), dpi=140) # 提升至140 DPI確保網頁文字銳利
+        fig, ax = plt.subplots(figsize=(10, dynamic_height), dpi=140) 
         
         sns.barplot(
             x='修正後日發電預估_kWh', 
@@ -138,20 +138,20 @@ if not raw_data.empty:
         max_val = df_result['修正後日發電預估_kWh'].max()
         ax.set_xlim(0, max_val * 1.15)
         
-        # 在長條末端精準顯示數值
-        for i, v in enumerate(top_data['修正後日發電預估_kWh']):  #  這裡改回繁體 預
+        # 修正上個版本的簡體字錯字，精準顯示長條末端數值
+        for i, v in enumerate(top_data['修正後日發電預估_kWh']):
             ax.text(v + (max_val * 0.01), i, f'{v:.3f}', va='center', fontsize=9.5, fontweight='bold')
             
         fig.tight_layout()
         st.pyplot(fig)
 
     # ==========================================
-    # 互動式搜尋模組 (完整保留功能)
+    # 互動式搜尋模組
     # ==========================================
     st.markdown("---")
     st.subheader("🔍 國家數據即時搜尋系統")
     
-    search_input = st.text_input("請輸入想查詢的國家名稱關鍵字（例如：台灣、Egypt，留白則顯示提示）：").strip()
+    search_input = st.text_input("請輸入想查詢的國家名稱關鍵字（例如：台灣、Egypt）：").strip()
     
     if search_input:
         search_results = df_result[df_result['國家名稱'].str.contains(search_input, na=False, case=False)]
@@ -161,13 +161,11 @@ if not raw_data.empty:
             
             for _, row in search_results.iterrows():
                 with st.expander(f"🌍 詳細報告：{row['國家名稱']}"):
-                    # 三欄式指標卡片
                     m1, m2, m3 = st.columns(3)
                     m1.metric("地理座標", f"緯度 {row['緯度 (Latitude)']}°")
                     m2.metric("角度修正係數", f"{row['角度修正係數']:.4f}")
                     m3.metric("預估日發電量", f"{row['修正後日發電預估_kWh']:.3f} kWh/m²")
                     
-                    # 物理評語
                     avg_val = df_result['修正後日發電預估_kWh'].mean()
                     status_text = "🟢 高於全球平均值" if row['修正後日發電預估_kWh'] > avg_val else "🔴 低於全球平均值"
                     st.markdown(f"**💡 綜合評估狀態：** {status_text}")
@@ -180,7 +178,7 @@ if not raw_data.empty:
             st.error(f"❌ 找不到與 '{search_input}' 相關的國家，請重新輸入。")
             
     # ==========================================
-    # 背景同步儲存至桌面功能 (完整保留功能)
+    # 背景同步儲存功能
     # ==========================================
     def get_desktop_path():
         home = os.path.expanduser("~")
@@ -191,6 +189,6 @@ if not raw_data.empty:
 
     try:
         full_save_path = os.path.join(get_desktop_path(), f"太陽能排行_第{target_day}天.png")
-        fig.savefig(full_save_path, dpi=200) # 桌面存圖保持高畫質 200 DPI
+        fig.savefig(full_save_path, dpi=200) 
     except:
         pass
