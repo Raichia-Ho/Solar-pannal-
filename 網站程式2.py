@@ -8,7 +8,7 @@ import seaborn as sns
 import os
 
 # ==========================================
-# 0. 網頁頁面基本設定 (保持全寬佈局)
+# 網頁頁面基本設定 (保持全寬佈局)
 # ==========================================
 st.set_page_config(
     page_title="全球太陽能發電潛力分析系統",
@@ -20,7 +20,7 @@ st.title("☀️ 全球太陽能發電潛力動態分析儀表板")
 st.markdown("本系統採用**赤緯角公轉模型**與**餘弦幾何修正 (Cosine Correction)**，即時評估全球各國的太陽能發電潛能。")
 
 # ==========================================
-# 1. 定義清洗與物理修正函式 (保留快取機制)
+# 定義清洗與物理修正函式 (保留快取機制)
 # ==========================================
 def clean_hours(hours_str):
     if pd.isna(hours_str): return 0
@@ -52,7 +52,7 @@ raw_data = load_and_preprocess_data()
 
 if not raw_data.empty:
     # ==========================================
-    # 2. 側邊欄控制面板 (完整保留功能)
+    # 側邊欄控制面板 (完整保留功能)
     # ==========================================
     st.sidebar.header("🛠️ 模擬參數控制調整")
     
@@ -77,7 +77,7 @@ if not raw_data.empty:
     st.sidebar.markdown("⚙️ **固定物理參數：**\n- 面板面積：1 m²\n- 光電轉換效率：18%\n- 系統性能比 (PR)：75%")
 
     # ==========================================
-    # 3. 核心物理運算
+    # 核心物理運算
     # ==========================================
     panel_area = 1   
     efficiency = 0.18
@@ -93,7 +93,7 @@ if not raw_data.empty:
     top_data = df_result.head(top_n)
 
     # ==========================================
-    # 4. 主畫面佈局設計 (修復圖表模糊與重疊問題)
+    # 主畫面佈局設計 (修復圖表模糊與重疊問題)
     # ==========================================
     col1, col2 = st.columns([1, 1.2])
     
@@ -115,7 +115,7 @@ if not raw_data.empty:
         plt.rcParams['font.sans-serif'] = ['Microsoft JhengHei'] 
         plt.rcParams['axes.unicode_minus'] = False 
         
-        # 【💡 顯示修正重點 1】：圖表高度隨國家數量（top_n）動態增高，避免文字重疊
+        # 圖表高度隨國家數量（top_n）動態增高，避免文字重疊
         dynamic_height = max(5, top_n * 0.45)
         fig, ax = plt.subplots(figsize=(10, dynamic_height), dpi=140) # 提升至140 DPI確保網頁文字銳利
         
@@ -134,19 +134,19 @@ if not raw_data.empty:
         ax.set_ylabel('國家名稱', fontsize=11)
         ax.tick_params(axis='both', labelsize=10)
         
-        # 【💡 顯示修正重點 2】：動態給 X 軸右側留白，防止末端數據標籤被切掉
+        # 動態給 X 軸右側留白，防止末端數據標籤被切掉
         max_val = df_result['修正後日發電預估_kWh'].max()
         ax.set_xlim(0, max_val * 1.15)
         
         # 在長條末端精準顯示數值
-        for i, v in enumerate(top_data['修正後日發電预估_kWh']):
+        for i, v in enumerate(top_data['修正後日發電預估_kWh']):  #  這裡改回繁體 預
             ax.text(v + (max_val * 0.01), i, f'{v:.3f}', va='center', fontsize=9.5, fontweight='bold')
             
         fig.tight_layout()
         st.pyplot(fig)
 
     # ==========================================
-    # 5. 互動式搜尋模組 (完整保留功能)
+    # 互動式搜尋模組 (完整保留功能)
     # ==========================================
     st.markdown("---")
     st.subheader("🔍 國家數據即時搜尋系統")
@@ -180,7 +180,7 @@ if not raw_data.empty:
             st.error(f"❌ 找不到與 '{search_input}' 相關的國家，請重新輸入。")
             
     # ==========================================
-    # 6. 背景同步儲存至桌面功能 (完整保留功能)
+    # 背景同步儲存至桌面功能 (完整保留功能)
     # ==========================================
     def get_desktop_path():
         home = os.path.expanduser("~")
