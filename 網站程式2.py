@@ -111,9 +111,8 @@ if not raw_data.empty:
     with col2:
         st.subheader("📊 數據視覺化長條圖")
         
-        # 優先使用 Linux 雲端字型，次選 Windows 微軟正黑體
-        plt.rcParams['font.sans-serif'] = ['WenQuanYi Micro Hei', 'Microsoft JhengHei', 'DejaVu Sans', 'sans-serif'] 
-        plt.rcParams['axes.unicode_minus'] = False # 解決負號顯示為方塊的問題
+        plt.rcParams['font.sans-serif'] = ['WenQuanYi Micro Hei', 'WenQuanYi Zen Hei', 'Noto Sans CJK TC', 'Microsoft JhengHei', 'PingFang TC', 'STHeiti', 'sans-serif']
+        plt.rcParams['axes.unicode_minus'] = False
         
         # 圖表高度隨國家數量（top_n）動態增高
         dynamic_height = max(5, top_n * 0.45)
