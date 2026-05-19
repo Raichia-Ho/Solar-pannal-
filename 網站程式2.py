@@ -6,6 +6,34 @@ import streamlit as st
 import matplotlib.pyplot as plt
 import seaborn as sns
 import os
+import matplotlib.font_manager as fm
+
+# ==========================================
+# 直接讀取 Linux 實體路徑，強行註冊字型
+# ==========================================
+def force_load_linux_chinese_fonts():
+    # Linux (Streamlit Cloud) 經由 packages.txt 安裝文泉驛字型時的標準系統路徑
+    target_fonts = [
+        "/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc",
+        "/usr/share/fonts/truetype/wqy/wqy-microhei.ttc"
+    ]
+    for path in target_fonts:
+        if os.path.exists(path):
+            try:
+                # 繞過 Matplotlib 快取，直接強行載入字型檔案
+                fm.fontManager.addfont(path)
+            except Exception:
+                pass
+
+# 執行強行註冊
+force_load_linux_chinese_fonts()
+
+# 全域畫圖字型優先順序設定 (文泉驛正黑 -> 文泉驛微米黑 -> 微軟正黑)
+plt.rcParams['font.sans-serif'] = [
+    'WenQuanYi Zen Hei', 'WenQuanYi Micro Hei', 
+    'Microsoft JhengHei', 'sans-serif'
+]
+plt.rcParams['axes.unicode_minus'] = False # 解決負號變方塊的問題
 
 # ==========================================
 # 網頁頁面基本設定 (保持全寬佈局)
@@ -111,9 +139,6 @@ if not raw_data.empty:
     with col2:
         st.subheader("📊 數據視覺化長條圖")
         
-        plt.rcParams['font.sans-serif'] = ['WenQuanYi Micro Hei', 'WenQuanYi Zen Hei', 'Noto Sans CJK TC', 'Microsoft JhengHei', 'PingFang TC', 'STHeiti', 'sans-serif']
-        plt.rcParams['axes.unicode_minus'] = False
-        
         # 圖表高度隨國家數量（top_n）動態增高
         dynamic_height = max(5, top_n * 0.45)
         fig, ax = plt.subplots(figsize=(10, dynamic_height), dpi=140) 
@@ -133,11 +158,11 @@ if not raw_data.empty:
         ax.set_ylabel('國家名稱', fontsize=11)
         ax.tick_params(axis='both', labelsize=10)
         
-        # 動態給 X 軸右側留白，防止末端數據標籤被切掉
+        # 動態給 X 軸右側留白
         max_val = df_result['修正後日發電預估_kWh'].max()
         ax.set_xlim(0, max_val * 1.15)
         
-        # 修正上個版本的簡體字錯字，精準顯示長條末端數值
+        # 精準顯示長條末端數值
         for i, v in enumerate(top_data['修正後日發電預估_kWh']):
             ax.text(v + (max_val * 0.01), i, f'{v:.3f}', va='center', fontsize=9.5, fontweight='bold')
             
