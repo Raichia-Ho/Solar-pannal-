@@ -5,14 +5,14 @@ import re
 import math
 import streamlit as st
 
-# 1. 讀取 CSV 檔案
+# 讀取 CSV 檔案
 try:
     data = pd.read_csv("各國家資訊.csv", encoding="utf-8")
     print(" 成功載入資料！")
 except Exception as e:
     print(f" 載入失敗: {e}")
 
-# 2. 定義清洗與物理修正函式
+# 定義清洗與物理修正函式
 def clean_hours(hours_str):
     if pd.isna(hours_str): return 0
     numbers = re.findall(r'\d+', str(hours_str).replace(',', ''))
@@ -57,13 +57,13 @@ import os  # 內建模處處理路徑
 #定義 top_10 (取排序後的前十名)
 top_10 = df_result.head(10)
 
-# 2. 設定字體防止中文亂碼 (Windows 常用字體)
+# 設定字體防止中文亂碼 (Windows 常用字體)
 plt.rcParams['font.sans-serif'] = ['Microsoft JhengHei'] 
 plt.rcParams['axes.unicode_minus'] = False 
 
 plt.figure(figsize=(12, 7))
 
-# 3. 修正：x 軸名稱必須對應你上面定義的 '修正後日發電預估_kWh'
+# 修正：x 軸名稱必須對應你上面定義的 '修正後日發電預估_kWh'
 sns.barplot(
     x='修正後日發電預估_kWh', 
     y='國家名稱', 
@@ -103,11 +103,11 @@ def get_desktop_path():
             return path
     return home # 如果都找不到，最後保險存到使用者根目錄
 
-# 2. 取得正確的儲存完整路徑
+# 取得正確的儲存完整路徑
 target_desktop = get_desktop_path()
 full_save_path = os.path.join(target_desktop, "太陽能排行.png")
 
-# 3. 執行儲存
+# 執行儲存
 plt.savefig(full_save_path, dpi=300)
 print(f"圖片已成功儲存至桌面！")
 print(f"檔案位置：{full_save_path}")
@@ -198,7 +198,7 @@ def start_interactive_search(df):
 start_interactive_search(df_result)
 
 
-# %%
+
 import numpy as np
 import pandas as pd
 import re
